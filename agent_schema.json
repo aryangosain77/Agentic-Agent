@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agentic Agent Schema",
+  "description": "Config, tool, memory and trace-event contracts for the Agentic Agent.",
+  "$defs": {
+    "AgentConfig": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string", "default": "claude-sonnet-5-5"},
+        "max_steps": {"type": "integer", "minimum": 1, "maximum": 100, "default": 12},
+        "max_tokens": {"type": "integer", "minimum": 1, "default": 2000},
+        "workspace": {"type": "string", "default": "workspace"},
+        "memory_path": {"type": "string", "default": "memory.json"},
+        "allowed_tools": {"type": ["array", "null"], "items": {"type": "string"}},
+        "trace_path": {"type": ["string", "null"], "default": "trace.jsonl"}
+      },
+      "additionalProperties": false
+    },
+    "ToolSpec": {
+      "type": "object",
+      "required": ["name", "description", "input_schema"],
+      "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "input_schema": {"type": "object", "required": ["type", "properties"]}
+      }
+    },
+    "TraceEvent": {
+      "type": "object",
+      "required": ["type", "ts"],
+      "properties": {
+        "type": {"enum": ["goal", "thought", "action", "stopped"]},
+        "ts": {"type": "number"},
+        "step": {"type": "integer"},
+        "text": {"type": "string"},
+        "tool": {"type": "string"},
+        "input": {"type": "object"},
+        "output": {"type": "string"}
+      }
+    },
+    "MemoryNote": {
+      "type": "object",
+      "required": ["ts", "text"],
+      "properties": {"ts": {"type": "number"}, "text": {"type": "string"}}
+    }
+  },
+  "type": "object",
+  "properties": {
+    "config": {"$ref": "#/$defs/AgentConfig"},
+    "tools": {"type": "array", "items": {"$ref": "#/$defs/ToolSpec"}},
+    "memory": {"type": "array", "items": {"$ref": "#/$defs/MemoryNote"}},
+    "trace": {"type": "array", "items": {"$ref": "#/$defs/TraceEvent"}}
+  }
+}

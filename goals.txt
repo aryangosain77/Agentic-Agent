@@ -1,0 +1,2 @@
+Compute 17*23 + 2**10, write the result to result.txt, then confirm by reading it back.
+Fetch https://example.com and save a one-line summary to summary.txt.
